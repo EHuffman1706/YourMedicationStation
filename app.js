@@ -120,7 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const frequency = document.getElementById('frequency').value;
     const time = document.getElementById('time').value;
 
-    const newData = { medName, dosage, person, frequency, time };
+    const customFreq = document.getElementById('customFreq').value;
+    const newData = { medName, dosage, person, frequency, customFreq, time };
 
     if (editingRow) {
       editingRow.remove();
@@ -250,4 +251,37 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('low-chart-weekly').style.display = selected === 'weekly' ? 'block' : 'none';
     document.getElementById('low-chart-monthly').style.display = selected === 'monthly' ? 'block' : 'none';
     document.getElementById('low-chart-3months').style.display = selected === '3months' ? 'block' : 'none';
+  });
+
+  // Email Reminder Front-End Logic
+  const reminderForm = document.getElementById('reminderSettingsForm');
+  const testButton = document.getElementById('sendTestReminder');
+
+  reminderForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const settings = {
+      email: document.getElementById('userEmail').value,
+      frequency: document.getElementById('reminderFrequency').value,
+      includeMeds: document.getElementById('includeMeds').checked,
+      includePickups: document.getElementById('includePickups').checked,
+      includeLow: document.getElementById('includeLow').checked,
+      time: document.getElementById('reminderTimes').value
+    };
+    localStorage.setItem('reminderSettings', JSON.stringify(settings));
+    alert('Reminder settings saved!');
+  });
+
+  testButton.addEventListener('click', () => {
+    const settings = JSON.parse(localStorage.getItem('reminderSettings'));
+    if (settings) {
+      alert('Sending test reminder to: ' + settings.email + 
+            '\nFrequency: ' + settings.frequency +
+            '\nInclude: ' +
+            (settings.includeMeds ? ' Meds' : '') +
+            (settings.includePickups ? ' Pickups' : '') +
+            (settings.includeLow ? ' Running Low') +
+            '\nTime: ' + settings.time);
+    } else {
+      alert('Please save your reminder settings first.');
+    }
   });
