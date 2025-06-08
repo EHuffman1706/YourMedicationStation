@@ -21,6 +21,7 @@ input, select, button {
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 1rem;
 }
 th, td {
   padding: 0.5rem;

@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <h1>Your Medication Station</h1>
+  <h1>Welcome to Your Medication Station</h1>
   <form id="medForm">
     <label for="medName">Medication Name:</label>
     <input type="text" id="medName" name="medName" />
@@ -55,6 +55,123 @@
     <tbody></tbody>
   </table>
 
-  <script src="./app.js"></script>
+  <h2>Medication History</h2>
+<div>
+  <label for="chartFilter">View:</label>
+  <select id="chartFilter">
+    <option value="weekly">Weekly</option>
+    <option value="monthly">Monthly</option>
+    <option value="3months">Last 3 Months</option>
+  </select>
+</div>
+
+<div id="chartContainer">
+  <img id="chart-weekly" src="med_history_weekly_chart.png" alt="Weekly Chart" style="max-width:100%; margin-top:1rem;">
+  <img id="chart-monthly" src="med_history_monthly_chart.png" alt="Monthly Chart" style="max-width:100%; margin-top:1rem; display:none;">
+  <img id="chart-3months" src="med_history_3months_chart.png" alt="Last 3 Months Chart" style="max-width:100%; margin-top:1rem; display:none;">
+</div>
+
+  <table id="historyList">
+    <thead>
+      <tr>
+        <th>Name</th><th>Dosage</th><th>Person</th><th>Date</th><th>Status</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Add Pickup Reminder</h2>
+  <form id="pickupForm">
+    <label for="pickupMedName">Medication Name:</label>
+    <input type="text" id="pickupMedName" name="pickupMedName" />
+
+    <label for="pickupQuantity">Quantity (e.g. 30-day supply):</label>
+    <input type="text" id="pickupQuantity" name="pickupQuantity" />
+
+    <label for="pickupPerson">Taken by:</label>
+    <select id="pickupPerson" name="pickupPerson">
+      <option value="">-- Select --</option>
+      <option>Jeanna Foos</option>
+      <option>Rick Foos</option>
+      <option>Nathaniel Foos</option>
+      <option>Leo the Yorky</option>
+      <option>Saucy the Yorky</option>
+      <option>Sady the cat</option>
+      <option>Shy the cat</option>
+      <option>Gwynn the cat</option>
+      <option>Puggy the pug</option>
+      <option>Vero the cat</option>
+    </select>
+
+    <label for="pickupDate">Pickup Date:</label>
+    <input type="date" id="pickupDate" name="pickupDate" />
+
+    <button type="submit">Add Pickup Reminder</button>
+  </form>
+
+  <h2>Upcoming Pickups</h2>
+  <table id="upcomingPickups">
+    <thead>
+      <tr>
+        <th>Name</th><th>Quantity</th><th>Person</th><th>Date</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Past Pickups</h2>
+<h2>Pickup Reminder Charts</h2>
+<div>
+  <label for="pickupChartFilter">View:</label>
+  <select id="pickupChartFilter">
+    <option value="weekly">Weekly</option>
+    <option value="monthly">Monthly</option>
+    <option value="3months">Last 3 Months</option>
+  </select>
+</div>
+
+<div id="pickupChartContainer">
+  <img id="pickup-chart-weekly" src="pickup_weekly_chart.png" alt="Pickup Weekly Chart" style="max-width:100%; margin-top:1rem;">
+  <img id="pickup-chart-monthly" src="pickup_monthly_chart.png" alt="Pickup Monthly Chart" style="max-width:100%; margin-top:1rem; display:none;">
+  <img id="pickup-chart-3months" src="pickup_3months_chart.png" alt="Pickup 3 Months Chart" style="max-width:100%; margin-top:1rem; display:none;">
+</div>
+
+  <table id="pastPickups">
+    <thead>
+      <tr>
+        <th>Name</th><th>Quantity</th><th>Person</th><th>Date</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  
+<h2>Running Low Alerts</h2>
+<table id="runningLowTable">
+<h2>Running Low Alert Charts</h2>
+<div>
+  <label for="lowChartFilter">View:</label>
+  <select id="lowChartFilter">
+    <option value="weekly">Weekly</option>
+    <option value="monthly">Monthly</option>
+    <option value="3months">Last 3 Months</option>
+  </select>
+</div>
+
+<div id="lowChartContainer">
+  <img id="low-chart-weekly" src="running_low_weekly_chart.png" alt="Low Weekly Chart" style="max-width:100%; margin-top:1rem;">
+  <img id="low-chart-monthly" src="running_low_monthly_chart.png" alt="Low Monthly Chart" style="max-width:100%; margin-top:1rem; display:none;">
+  <img id="low-chart-3months" src="running_low_3months_chart.png" alt="Low 3 Months Chart" style="max-width:100%; margin-top:1rem; display:none;">
+</div>
+
+  <thead>
+    <tr>
+      <th>Name</th><th>Quantity</th><th>Person</th><th>Pickup Date</th><th>Days Supply</th><th>Expected End</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script src="./app.js"></script>
 </body>
 </html>
