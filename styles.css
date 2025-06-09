@@ -10,7 +10,7 @@ h1 {
 form {
   margin-bottom: 20px;
 }
-input {
+input, select {
   margin: 5px 0;
 }
 button {
