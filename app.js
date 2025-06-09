@@ -31,36 +31,52 @@ function addEntryToDOM(entry) {
   const { profile, name, time, dosage } = entry;
 
   const li = document.createElement('li');
-
   const textSpan = document.createElement('span');
   textSpan.textContent = `${name} at ${time} — ${dosage} (Taken by: ${profile})`;
 
   const editBtn = document.createElement('button');
   editBtn.textContent = 'Edit';
-  editBtn.onclick = () => {
-    const newName = prompt('Edit medication name:', name);
-    const newTime = prompt('Edit time:', time);
-    const newDosage = prompt('Edit dosage:', dosage);
-    const newProfile = prompt('Edit profile name:', profile);
-    if (newName && newTime && newDosage && newProfile) {
-      entry.name = newName;
-      entry.time = newTime;
-      entry.dosage = newDosage;
-      entry.profile = newProfile;
-      updateEntry(entry);
-    }
-  };
+
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Save';
+  saveBtn.style.display = 'none';
 
   const deleteBtn = document.createElement('button');
   deleteBtn.textContent = 'Delete';
+
+  editBtn.onclick = () => {
+    const nameField = prompt('Edit medication name:', name);
+    const timeField = prompt('Edit time:', time);
+    const dosageField = prompt('Edit dosage:', dosage);
+    const profileField = prompt('Edit profile name:', profile);
+
+    if (nameField && timeField && dosageField && profileField) {
+      entry.name = nameField;
+      entry.time = timeField;
+      entry.dosage = dosageField;
+      entry.profile = profileField;
+
+      saveBtn.style.display = 'inline-block';
+    }
+  };
+
+  saveBtn.onclick = () => {
+    updateEntry(entry);
+    location.reload();
+  };
+
   deleteBtn.onclick = () => {
-    deleteEntry(entry);
-    li.remove();
+    if (confirm('Are you sure you want to delete this entry?')) {
+      deleteEntry(entry);
+      li.remove();
+    }
   };
 
   li.appendChild(textSpan);
   li.appendChild(editBtn);
+  li.appendChild(saveBtn);
   li.appendChild(deleteBtn);
+
   document.getElementById('med-list').appendChild(li);
 }
 
@@ -86,6 +102,5 @@ function updateEntry(updatedEntry) {
   if (index !== -1) {
     entries[index] = updatedEntry;
     localStorage.setItem('medEntries', JSON.stringify(entries));
-    location.reload();  // Refresh to reflect changes
   }
 }
