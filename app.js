@@ -17,7 +17,7 @@ document.getElementById('med-form').addEventListener('submit', function(e) {
 });
 
 function saveEntry(entry) {
-  let entries = JSON.parse(localStorage.getItem('medEntries') || '[]');
+  const entries = JSON.parse(localStorage.getItem('medEntries') || '[]');
   entries.push(entry);
   localStorage.setItem('medEntries', JSON.stringify(entries));
 }
@@ -31,6 +31,7 @@ function addEntryToDOM(entry) {
   const { profile, name, time, dosage } = entry;
 
   const li = document.createElement('li');
+
   const textSpan = document.createElement('span');
   textSpan.textContent = `${name} at ${time} — ${dosage} (Taken by: ${profile})`;
 
@@ -46,8 +47,7 @@ function addEntryToDOM(entry) {
       entry.time = newTime;
       entry.dosage = newDosage;
       entry.profile = newProfile;
-      updateStorage();
-      location.reload();
+      updateEntry(entry);
     }
   };
 
@@ -75,14 +75,17 @@ function deleteEntry(entryToDelete) {
   localStorage.setItem('medEntries', JSON.stringify(entries));
 }
 
-function updateStorage() {
-  const listItems = document.querySelectorAll('#med-list li');
-  const updatedEntries = Array.from(listItems).map(li => {
-    const text = li.firstChild.textContent;
-    const match = text.match(/(.+) at (.+) — (.+) \(Taken by: (.+)\)/);
-    if (!match) return null;
-    const [, name, time, dosage, profile] = match;
-    return { name, time, dosage, profile };
-  }).filter(Boolean);
-  localStorage.setItem('medEntries', JSON.stringify(updatedEntries));
+function updateEntry(updatedEntry) {
+  let entries = JSON.parse(localStorage.getItem('medEntries') || '[]');
+  const index = entries.findIndex(entry =>
+    entry.name === updatedEntry.name &&
+    entry.time === updatedEntry.time &&
+    entry.dosage === updatedEntry.dosage &&
+    entry.profile === updatedEntry.profile
+  );
+  if (index !== -1) {
+    entries[index] = updatedEntry;
+    localStorage.setItem('medEntries', JSON.stringify(entries));
+    location.reload();  // Refresh to reflect changes
+  }
 }
