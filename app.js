@@ -16,6 +16,14 @@ document.getElementById('med-form').addEventListener('submit', function(e) {
   document.getElementById('med-form').reset();
 });
 
+function formatTime(time24) {
+  const [hour, minute] = time24.split(':');
+  const h = parseInt(hour);
+  const suffix = h >= 12 ? 'PM' : 'AM';
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  return `${hour12}:${minute} ${suffix}`;
+}
+
 function saveEntry(entry) {
   const entries = JSON.parse(localStorage.getItem('medEntries') || '[]');
   entries.push(entry);
@@ -29,10 +37,11 @@ function loadEntries() {
 
 function addEntryToDOM(entry) {
   const { profile, name, time, dosage } = entry;
+  const formattedTime = formatTime(time);
 
   const li = document.createElement('li');
   const textSpan = document.createElement('span');
-  textSpan.textContent = `${name} at ${time} — ${dosage} (Taken by: ${profile})`;
+  textSpan.textContent = `${name} at ${formattedTime} — ${dosage} (Taken by: ${profile})`;
 
   const editBtn = document.createElement('button');
   editBtn.textContent = 'Edit';
@@ -55,7 +64,6 @@ function addEntryToDOM(entry) {
       entry.time = timeField;
       entry.dosage = dosageField;
       entry.profile = profileField;
-
       saveBtn.style.display = 'inline-block';
     }
   };
