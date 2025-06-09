@@ -7,10 +7,12 @@ document.getElementById('med-form').addEventListener('submit', function(e) {
   const name = document.getElementById('med-name').value;
   const time = document.getElementById('med-time').value;
   const dosage = document.getElementById('med-dosage').value;
+  const instruction = document.getElementById('med-instruction').value;
+  const notes = document.getElementById('med-notes').value;
 
   if (!profile || !name || !time || !dosage) return;
 
-  const entry = { profile, name, time, dosage };
+  const entry = { profile, name, time, dosage, instruction, notes };
   saveEntry(entry);
   addEntryToDOM(entry);
   document.getElementById('med-form').reset();
@@ -36,12 +38,16 @@ function loadEntries() {
 }
 
 function addEntryToDOM(entry) {
-  const { profile, name, time, dosage } = entry;
+  const { profile, name, time, dosage, instruction, notes } = entry;
   const formattedTime = formatTime(time);
 
   const li = document.createElement('li');
   const textSpan = document.createElement('span');
-  textSpan.textContent = `${name} at ${formattedTime} — ${dosage} (Taken by: ${profile})`;
+  textSpan.innerHTML = `
+    <strong>${name}</strong> at ${formattedTime} — ${dosage} (Taken by: ${profile})<br>
+    <em>Instructions:</em> ${instruction || 'None'}<br>
+    <em>Notes:</em> ${notes || 'None'}
+  `;
 
   const editBtn = document.createElement('button');
   editBtn.textContent = 'Edit';
@@ -58,12 +64,16 @@ function addEntryToDOM(entry) {
     const timeField = prompt('Edit time:', time);
     const dosageField = prompt('Edit dosage:', dosage);
     const profileField = prompt('Edit profile name:', profile);
+    const instructionField = prompt('Edit instructions:', instruction);
+    const notesField = prompt('Edit notes:', notes);
 
     if (nameField && timeField && dosageField && profileField) {
       entry.name = nameField;
       entry.time = timeField;
       entry.dosage = dosageField;
       entry.profile = profileField;
+      entry.instruction = instructionField;
+      entry.notes = notesField;
       saveBtn.style.display = 'inline-block';
     }
   };
@@ -74,7 +84,28 @@ function addEntryToDOM(entry) {
   };
 
   deleteBtn.onclick = () => {
-    if (confirm('Are you sure you want to delete this entry?')) {
+    const modal = document.getElementById('confirm-modal');
+    const overlay = document.getElementById('modal-overlay');
+    modal.style.display = 'block';
+    overlay.style.display = 'block';
+
+    const yesBtn = document.getElementById('confirm-yes');
+    const noBtn = document.getElementById('confirm-no');
+
+    yesBtn.focus();
+
+    yesBtn.onclick = () => {
+      deleteEntry(entry);
+      li.remove();
+      modal.style.display = 'none';
+      overlay.style.display = 'none';
+    };
+
+    noBtn.onclick = () => {
+      modal.style.display = 'none';
+      overlay.style.display = 'none';
+    };
+
       deleteEntry(entry);
       li.remove();
     }
