@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Medication Station</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>Welcome to Your Medication Station</h1>
+
+  <form id="med-form">
+    <input type="hidden" id="isNewFlag" value="true">
+
+    <label for="medName">Medication Name</label>
+    <input type="text" id="medName" name="medName" placeholder="e.g. Valsartan" aria-describedby="medNameHelp">
+    <small id="medNameHelp" class="helper-text">Enter the name of the medication.</small>
+
+    
+
+<label for="dosageSelect">Dosage</label>
+<select id="dosageSelect" name="dosageSelect" aria-describedby="dosageHelp">
+  <option value="">Select dosage</option>
+  <option value="5mg">5mg</option>
+  <option value="10mg">10mg</option>
+  <option value="20mg">20mg</option>
+  <option value="25mg">25mg</option>
+  <option value="37.5mg">37.5mg</option>
+  <option value="50mg">50mg</option>
+  <option value="100mg">100mg</option>
+  <option value="160mg">160mg</option>
+  <option value="100 units/mL">100 units/mL</option>
+  <option value="120 units">120 units</option>
+  <option value="Other">Other</option>
+</select>
+<input type="text" id="customDosage" name="customDosage" placeholder="Enter custom dosage" style="display:none;" aria-describedby="dosageHelp">
+  <option value="">Select dosage</option>
+  <option value="5mg">5mg</option>
+  <option value="10mg">10mg</option>
+  <option value="20mg">20mg</option>
+  <option value="25mg">25mg</option>
+  <option value="37.5mg">37.5mg</option>
+  <option value="50mg">50mg</option>
+  <option value="100mg">100mg</option>
+  <option value="160mg">160mg</option>
+  <option value="Other">Other</option>
+</select>
+<input type="text" id="customDosage" name="customDosage" placeholder="Enter custom dosage" style="display:none;" aria-describedby="dosageHelp">
+<small id="dosageHelp" class="helper-text">Specify the strength and unit of the dose.</small>
+
+
+    <label for="frequency">Frequency</label>
+    <input type="text" id="frequency" name="frequency" placeholder="e.g. Twice a day" aria-describedby="frequencyHelp">
+    <small id="frequencyHelp" class="helper-text">How often this medication should be taken.</small>
+
+    <label for="reminderTimes">Reminder Time(s)</label>
+    <input type="text" id="reminderTimes" name="reminderTimes" placeholder="e.g. 8:00 AM, 8:00 PM" aria-describedby="reminderTimesHelp">
+    <small id="reminderTimesHelp" class="helper-text">You can add multiple times separated by commas.</small>
+
+    <label for="profileSelect">Who is this for?</label>
+    <select id="profileSelect" name="profileSelect" aria-describedby="profileHelp">
+      <option value="">Select person or pet</option>
+      <option value="jeanna">Jeanna</option>
+      <option value="rick">Rick</option>
+      <option value="leo">Leo (dog)</option>
+  <option value="nathaniel">Nathaniel</option>
+  <option value="puggy">Puggy (pug)</option>
+  <option value="saucy">Saucy (yorky)</option>
+  <option value="sady">Sady (cat)</option>
+  <option value="shy">Shy (cat)</option>
+  <option value="vero">Vero (cat)</option>
+
+    </select>
+    <small id="profileHelp" class="helper-text">Choose who takes this medication.</small>
+
+    <label>
+      <input type="checkbox" id="med-temporary" name="med-temporary"> Temporary medication
+    </label><br>
+    <label>
+      <input type="checkbox" id="med-controlled" name="med-controlled"> Controlled substance
+    </label><br>
+    <label>
+      <input type="checkbox" id="med-current" name="med-current" checked> Currently Taking
+    </label><br>
+
+    <button type="button" id="toggle-dates-btn">Add Start and End Dates</button>
+    <div id="temp-fields" style="display:none;">
+      <label for="med-start-date">Start Date:</label>
+      <input type="date" id="med-start-date" name="med-start-date"><br>
+      <label for="med-end-date">End Date:</label>
+      <input type="date" id="med-end-date" name="med-end-date"><br>
+    </div>
+
+    <input type="hidden" id="finalDosage" name="finalDosage">
+
+<label for="med-notes">Notes:</label>
+    <input type="text" id="med-notes" name="med-notes"><br>
+
+    <button type="submit">Add Medication Entry</button>
+  </form>
+
+  <h2 id="current-meds">Current Medication Schedule</h2>
+  <ul id="current-med-list"></ul>
+  <h2 id="past-meds">Past Medications</h2>
+  <ul id="past-med-list"></ul>
+
+  
+</body>
+</html>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('med-form');
+  const medListCurrent = document.getElementById('current-med-list');
+  const medListPast = document.getElementById('past-med-list');
+  const dosageSelect = document.getElementById('dosageSelect');
+  const customDosage = document.getElementById('customDosage');
+  const finalDosage = document.getElementById('finalDosage');
+  const toggleDatesBtn = document.getElementById('toggle-dates-btn');
+  const tempFields = document.getElementById('temp-fields');
+  const currentCheckbox = document.getElementById('med-current');
+  const isNewFlag = document.getElementById('isNewFlag');
+  let editingId = null;
+
+  function getMedications() {
+    return JSON.parse(localStorage.getItem('medications') || '[]');
+  }
+
+  function saveMedications(meds) {
+    localStorage.setItem('medications', JSON.stringify(meds));
+  }
+
+  function renderMedications() {
+    const meds = getMedications();
+    medListCurrent.innerHTML = '';
+    medListPast.innerHTML = '';
+
+    meds.forEach(med => {
+      const li = document.createElement('li');
+      li.textContent = `${med.name} ${med.dosage} – ${med.frequency}`;
+      const editBtn = document.createElement('button');
+      editBtn.textContent = 'Edit';
+      editBtn.setAttribute('aria-label', `Edit ${med.name} entry`);
+      editBtn.onclick = () => loadForEdit(med.id);
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.setAttribute('aria-label', `Delete ${med.name} entry`);
+      deleteBtn.onclick = () => deleteEntry(med.id);
+
+      li.appendChild(editBtn);
+      li.appendChild(deleteBtn);
+
+      (med.current ? medListCurrent : medListPast).appendChild(li);
+    });
+  }
+
+  function loadForEdit(id) {
+    const meds = getMedications();
+    const med = meds.find(m => m.id === id);
+    if (!med) return;
+    document.getElementById('medName').value = med.name;
+    dosageSelect.value = med.dosage.includes('mg') || med.dosage.includes('units') ? med.dosage : 'Other';
+    customDosage.style.display = dosageSelect.value === 'Other' ? 'block' : 'none';
+    customDosage.value = dosageSelect.value === 'Other' ? med.dosage : '';
+    finalDosage.value = med.dosage;
+    document.getElementById('frequency').value = med.frequency;
+    document.getElementById('reminderTimes').value = med.reminderTimes;
+    document.getElementById('profileSelect').value = med.profile;
+    document.getElementById('med-temporary').checked = med.temporary;
+    document.getElementById('med-controlled').checked = med.controlled;
+    document.getElementById('med-current').checked = med.current;
+    document.getElementById('med-start-date').value = med.startDate || '';
+    document.getElementById('med-end-date').value = med.endDate || '';
+    document.getElementById('med-notes').value = med.notes || '';
+    editingId = id;
+    toggleFields();
+  }
+
+  function deleteEntry(id) {
+    const meds = getMedications().filter(m => m.id !== id);
+    saveMedications(meds);
+    renderMedications();
+  }
+
+  dosageSelect.addEventListener('change', function () {
+    customDosage.style.display = this.value === 'Other' ? 'block' : 'none';
+    finalDosage.value = this.value === 'Other' ? customDosage.value : this.value;
+  });
+
+  customDosage.addEventListener('input', function () {
+    finalDosage.value = this.value;
+  });
+
+  function toggleFields() {
+    const showTempSection = isNewFlag.value === 'true' && !currentCheckbox.checked;
+    toggleDatesBtn.style.display = showTempSection ? 'inline' : 'none';
+    if (!showTempSection) {
+      tempFields.style.display = 'none';
+    }
+  }
+
+  toggleDatesBtn.addEventListener('click', function () {
+    tempFields.style.display = tempFields.style.display === 'none' ? 'block' : 'none';
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const meds = getMedications();
+    const medData = {
+      id: editingId || Date.now().toString(),
+      name: document.getElementById('medName').value,
+      dosage: finalDosage.value,
+      frequency: document.getElementById('frequency').value,
+      reminderTimes: document.getElementById('reminderTimes').value,
+      profile: document.getElementById('profileSelect').value,
+      temporary: document.getElementById('med-temporary').checked,
+      controlled: document.getElementById('med-controlled').checked,
+      current: document.getElementById('med-current').checked,
+      startDate: document.getElementById('med-start-date').value,
+      endDate: document.getElementById('med-end-date').value,
+      notes: document.getElementById('med-notes').value
+    };
+
+    const existingIndex = meds.findIndex(m => m.id === medData.id);
+    if (existingIndex > -1) {
+      meds[existingIndex] = medData;
+    } else {
+      meds.push(medData);
+    }
+
+    saveMedications(meds);
+    editingId = null;
+    form.reset();
+    toggleFields();
+    renderMedications();
+  });
+
+  toggleFields();
+  renderMedications();
+});
+</script>
