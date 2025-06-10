@@ -10,6 +10,7 @@
 <body>
   <h1>Your Medication Station</h1>
   <form id="med-form">
+  <input type="hidden" id="isNewFlag" value="true">
     <label for="profile-select">Profile:</label>
     <input type="text" id="profile-select" name="profile-select"><br>
     <label for="med-name">Medication Name:</label>
@@ -21,12 +22,15 @@
     <label for="med-instruction">Instructions:</label>
     <input type="text" id="med-instruction" name="med-instruction"><br>
     <label><input type="checkbox" id="med-temporary" name="med-temporary"> Temporary medication</label><br>
-    <div id="temp-fields">
+<label><input type="checkbox" id="med-controlled" name="med-controlled"> Controlled substance</label><br>
+<label><input type="checkbox" id="med-current" name="med-current" checked> Currently Taking</label><br>
+    <button type="button" id="toggle-dates-btn">Add Start and End Dates</button>
+<div id="temp-fields" style="display:none;">
       <label for="med-start-date">Start Date:</label>
       <input type="date" id="med-start-date" name="med-start-date"><br>
       <label for="med-end-date">End Date:</label>
       <input type="date" id="med-end-date" name="med-end-date"><br>
-      <label><input type="checkbox" id="med-no-refills" name="med-no-refills"> No Refills Allowed</label><br>
+      
     </div>
     <label for="med-notes">Notes:</label>
     <input type="text" id="med-notes" name="med-notes"><br>
@@ -37,5 +41,91 @@
   <ul id="current-med-list"></ul>
   <h2 id="past-meds">Past Medications</h2>
   <ul id="past-med-list"></ul>
+
+
+
+
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const tempCheckbox = document.getElementById('med-temporary');
+  const controlledCheckbox = document.getElementById('med-controlled');
+  const currentCheckbox = document.getElementById('med-current');
+  const tempFields = document.getElementById('temp-fields');
+  const isNewFlag = document.getElementById('isNewFlag');
+  const toggleDatesBtn = document.getElementById('toggle-dates-btn');
+
+  function toggleFields() {
+    const showTempSection = tempCheckbox.checked && isNewFlag.value === 'true' && !currentCheckbox.checked;
+    toggleDatesBtn.style.display = showTempSection ? 'inline' : 'none';
+    if (!showTempSection) {
+      tempFields.style.display = 'none';
+    }
+  }
+
+  toggleDatesBtn.addEventListener('click', function() {
+    tempFields.style.display = tempFields.style.display === 'none' ? 'block' : 'none';
+  });
+
+  tempCheckbox.addEventListener('change', toggleFields);
+  currentCheckbox.addEventListener('change', toggleFields);
+  controlledCheckbox.addEventListener('change', toggleFields);
+  toggleFields();
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const tempCheckbox = document.getElementById('med-temporary');
+  const controlledCheckbox = document.getElementById('med-controlled');
+  const currentCheckbox = document.getElementById('med-current');
+  const tempFields = document.getElementById('temp-fields');
+  const isNewFlag = document.getElementById('isNewFlag');
+  const toggleDatesBtn = document.getElementById('toggle-dates-btn');
+
+  function toggleFields() {
+    const showTempSection = tempCheckbox.checked && isNewFlag.value === 'true' && !currentCheckbox.checked;
+    toggleDatesBtn.style.display = showTempSection ? 'inline' : 'none';
+    if (!showTempSection) {
+      tempFields.style.display = 'none';
+    }
+  }
+
+  toggleDatesBtn.addEventListener('click', function() {
+    tempFields.style.display = tempFields.style.display === 'none' ? 'block' : 'none';
+  });
+
+  tempCheckbox.addEventListener('change', toggleFields);
+  currentCheckbox.addEventListener('change', toggleFields);
+  controlledCheckbox.addEventListener('change', toggleFields);
+  toggleFields();
+});
+</script>
+
+
+
+
+
+
+
+
 </body>
 </html>
