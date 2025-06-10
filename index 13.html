@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Medication Station</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>Welcome to Your Medication Station</h1>
+
+  <form id="med-form">
+    <input type="hidden" id="isNewFlag" value="true">
+
+    <label for="medName">Medication Name</label>
+    <input type="text" id="medName" name="medName" placeholder="e.g. Valsartan" aria-describedby="medNameHelp">
+    <small id="medNameHelp" class="helper-text">Enter the name of the medication.</small>
+
+    
+
+<label for="dosageSelect">Dosage</label>
+<select id="dosageSelect" name="dosageSelect" aria-describedby="dosageHelp">
+  <option value="">Select dosage</option>
+  <option value="5mg">5mg</option>
+  <option value="10mg">10mg</option>
+  <option value="20mg">20mg</option>
+  <option value="25mg">25mg</option>
+  <option value="37.5mg">37.5mg</option>
+  <option value="50mg">50mg</option>
+  <option value="100mg">100mg</option>
+  <option value="160mg">160mg</option>
+  <option value="100 units/mL">100 units/mL</option>
+  <option value="120 units">120 units</option>
+  <option value="Other">Other</option>
+</select>
+<input type="text" id="customDosage" name="customDosage" placeholder="Enter custom dosage" style="display:none;" aria-describedby="dosageHelp">
+  <option value="">Select dosage</option>
+  <option value="5mg">5mg</option>
+  <option value="10mg">10mg</option>
+  <option value="20mg">20mg</option>
+  <option value="25mg">25mg</option>
+  <option value="37.5mg">37.5mg</option>
+  <option value="50mg">50mg</option>
+  <option value="100mg">100mg</option>
+  <option value="160mg">160mg</option>
+  <option value="Other">Other</option>
+</select>
+<input type="text" id="customDosage" name="customDosage" placeholder="Enter custom dosage" style="display:none;" aria-describedby="dosageHelp">
+<small id="dosageHelp" class="helper-text">Specify the strength and unit of the dose.</small>
+
+
+    <label for="frequency">Frequency</label>
+    <input type="text" id="frequency" name="frequency" placeholder="e.g. Twice a day" aria-describedby="frequencyHelp">
+    <small id="frequencyHelp" class="helper-text">How often this medication should be taken.</small>
+
+    <label for="reminderTimes">Reminder Time(s)</label>
+    <input type="text" id="reminderTimes" name="reminderTimes" placeholder="e.g. 8:00 AM, 8:00 PM" aria-describedby="reminderTimesHelp">
+    <small id="reminderTimesHelp" class="helper-text">You can add multiple times separated by commas.</small>
+
+    <label for="profileSelect">Who is this for?</label>
+    <select id="profileSelect" name="profileSelect" aria-describedby="profileHelp">
+      <option value="">Select person or pet</option>
+      <option value="jeanna">Jeanna</option>
+      <option value="rick">Rick</option>
+      <option value="leo">Leo (dog)</option>
+  <option value="nathaniel">Nathaniel</option>
+  <option value="puggy">Puggy (pug)</option>
+  <option value="saucy">Saucy (yorky)</option>
+  <option value="sady">Sady (cat)</option>
+  <option value="shy">Shy (cat)</option>
+  <option value="vero">Vero (cat)</option>
+
+    </select>
+    <small id="profileHelp" class="helper-text">Choose who takes this medication.</small>
+
+    <label>
+      <input type="checkbox" id="med-temporary" name="med-temporary"> Temporary medication
+    </label><br>
+    <label>
+      <input type="checkbox" id="med-controlled" name="med-controlled"> Controlled substance
+    </label><br>
+    <label>
+      <input type="checkbox" id="med-current" name="med-current" checked> Currently Taking
+    </label><br>
+
+    <button type="button" id="toggle-dates-btn">Add Start and End Dates</button>
+    <div id="temp-fields" style="display:none;">
+      <label for="med-start-date">Start Date:</label>
+      <input type="date" id="med-start-date" name="med-start-date"><br>
+      <label for="med-end-date">End Date:</label>
+      <input type="date" id="med-end-date" name="med-end-date"><br>
+    </div>
+
+    <input type="hidden" id="finalDosage" name="finalDosage">
+
+<label for="med-notes">Notes:</label>
+    <input type="text" id="med-notes" name="med-notes"><br>
+
+    <button type="submit">Add Medication Entry</button>
+  </form>
+
+  <h2 id="current-meds">Current Medication Schedule</h2>
+  <ul id="current-med-list"></ul>
+  <h2 id="past-meds">Past Medications</h2>
+  <ul id="past-med-list"></ul>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const tempCheckbox = document.getElementById('med-temporary');
+      const controlledCheckbox = document.getElementById('med-controlled');
+      const currentCheckbox = document.getElementById('med-current');
+      const tempFields = document.getElementById('temp-fields');
+      const isNewFlag = document.getElementById('isNewFlag');
+      const toggleDatesBtn = document.getElementById('toggle-dates-btn');
+
+      function toggleFields() {
+        const showTempSection = isNewFlag.value === 'true' && !currentCheckbox.checked;
+        toggleDatesBtn.style.display = showTempSection ? 'inline' : 'none';
+        if (!showTempSection) {
+          tempFields.style.display = 'none';
+        }
+      }
+
+      toggleDatesBtn.addEventListener('click', function() {
+        tempFields.style.display = tempFields.style.display === 'none' ? 'block' : 'none';
+      });
+
+      tempCheckbox.addEventListener('change', toggleFields);
+      controlledCheckbox.addEventListener('change', toggleFields);
+      currentCheckbox.addEventListener('change', toggleFields);
+      
+      const dosageSelect = document.getElementById('dosageSelect');
+      const customDosage = document.getElementById('customDosage');
+      dosageSelect.addEventListener('change', function () {
+        customDosage.style.display = this.value === 'Other' ? 'block' : 'none';
+      });
+
+      
+      const dosageSelect = document.getElementById('dosageSelect');
+      const customDosage = document.getElementById('customDosage');
+      const finalDosage = document.getElementById('finalDosage');
+
+      dosageSelect.addEventListener('change', function () {
+        const val = this.value;
+        if (val === 'Other') {
+          customDosage.style.display = 'block';
+          finalDosage.value = customDosage.value;
+        } else {
+          customDosage.style.display = 'none';
+          finalDosage.value = val;
+        }
+      });
+
+      customDosage.addEventListener('input', function () {
+        finalDosage.value = this.value;
+      });
+
+      toggleFields();
+    });
+  </script>
+</body>
+</html>
